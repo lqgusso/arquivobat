@@ -2,7 +2,7 @@
 cls
 :menu
 cls
-color 80
+color 24
 
 date /t
 
