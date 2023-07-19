@@ -2,7 +2,7 @@
 cls
 :menu
 cls
-color 90
+color 70
 
 date /t
 
@@ -36,7 +36,6 @@ Get-AppxPackage windowsphone | Remove-AppxPackage
 Get-AppxPackage windowsstore | Remove-AppxPackage
 Get-AppxPackage xboxapp | Remove-AppxPackage
 winget uninstall “Microsoft Pay”
-
 echo =======================================
 echo *      Aplicativos Desinstalados    *
 echo =======================================
@@ -46,8 +45,44 @@ goto menu
 :opcao2
 cls
 echo ==================================
-echo *      WSUS concluido           *
+echo *    ATUALIZANDO WSUS        *
 echo ==================================
+echo Configuracoes atuais do WSUS:
+reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate
+pause
+echo ========================================
+echo *    ATUALIZANDO OS REGISTROS        *
+echo ========================================
+[HKEY_LOCAL_MACHINESOFTWARE]
+
+[HKEY_LOCAL_MACHINESOFTWAREPolicies]
+
+[HKEY_LOCAL_MACHINESOFTWAREPoliciesMicrosoft]
+
+[HKEY_LOCAL_MACHINESOFTWAREPoliciesMicrosoftWindows]
+
+[HKEY_LOCAL_MACHINESOFTWAREPoliciesMicrosoftWindowsWindowsUpdate]
+"WUServer"="http://ip_servidor"
+"WUStatusServer"="http://ip_servidor"
+
+[HKEY_LOCAL_MACHINESOFTWAREPoliciesMicrosoftWindowsWindowsUpdateAU]
+"AUOptions"=dword:00000004
+"AutoInstallMinorUpdates"=dword:00000001
+"DetectionFrequency"=dword:00000006
+"DetectionFrequencyEnabled"=dword:00000001
+"NoAutoRebootWithLoggedOnUsers"=dword:00000001
+"NoAutoUpdate"=dword:00000000
+"RebootRelaunchTimeoutEnabled"=dword:00000001
+"RebootRelaunchTimeout"=dword:0000001e
+"RescheduleWaitTime"=dword:0000003c
+"RescheduleWaitTimeEnabled"=dword:00000001
+"ScheduledInstallDay"=dword:00000000
+"ScheduledInstallTime"=dword:00000003
+"UseWUServer"=dword:00000001
+echo Novas configuracoes:
+reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate
+echo Acesse via browser o endereço "http://ip_servidor/selfupdate/wuident.cab" (sem as aspas e ), caso seja solicitado o download do arquivo "wuident.cab" a estação está conseguindo receber arquivos do servidor".
+wuauclt.exe /detectnow /resetauthorization
 pause
 goto menu
 
@@ -71,6 +106,7 @@ wmic bios get serialnumber
 echo LICENCA WINDOWS:
 wmic path softwarelicensingservice get OA3xOriginalProductKey
 winver
+slmgr /dli
 pause
 goto menu
 
