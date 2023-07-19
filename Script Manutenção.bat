@@ -2,19 +2,19 @@
 cls
 :menu
 cls
-color 80
+color 90
 
 date /t
 
 echo Computador: %computername%        Usuario: %username%
-                   
-echo            MENU TAREFAS
+echo ------------------------------------------------------                   
+echo    MENU CORRECAO WIN 10 E WIN 11
 echo  ==================================
-echo * 1. Esvaziar a Lixeira            * 
-echo * 2. Fazer Backup                  *
-echo * 3. Escanear Disco Local          *
-echo * 4. Painel de Controle            *
-echo * 5. Sair                          * 
+echo * 1. Desinstalar Aplicativos Nativos  * 
+echo * 2. Corrigir WSUS                    *
+echo * 3. Exibir Aplicativos Instalados    *
+echo * 4. Informacoes da ET                *
+echo * 5. Sair                             * 
 echo  ==================================
 
 set /p opcao= Escolha uma opcao: 
@@ -28,18 +28,25 @@ if %opcao% GEQ 6 goto opcao6
 
 :opcao1
 cls
-rd /S /Q c:\$Recycle.bin
-echo ==================================
-echo *      Lixeira Esvaziada          *
-echo ==================================
+Get-AppxPackage officehub | Remove-AppxPackage
+Get-AppxPackage skypeapp | Remove-AppxPackage
+Get-AppxPackage windowsmaps | Remove-AppxPackage
+Get-AppxPackage solitairecollection | Remove-AppxPackage
+Get-AppxPackage windowsphone | Remove-AppxPackage
+Get-AppxPackage windowsstore | Remove-AppxPackage
+Get-AppxPackage xboxapp | Remove-AppxPackage
+winget uninstall “Microsoft Pay”
+
+echo =======================================
+echo *      Aplicativos Desinstalados    *
+echo =======================================
 pause
 goto menu
 
 :opcao2
 cls
-xcopy /T /C C:\Users\lucianogusso\Documents\*.* C:\Users\lucianogusso\Desktop
 echo ==================================
-echo *      Backup concluido           *
+echo *      WSUS concluido           *
 echo ==================================
 pause
 goto menu
@@ -47,15 +54,23 @@ goto menu
 :opcao3
 cls
 echo ==================================
-echo *     Escaneamento de disco       *
+echo *     Aplicativos Instalados    *
 echo ==================================
-chkdsk c:
+winget list
 pause
 goto menu
 
 :opcao4
 cls
-control.exe
+echo ==============================================================
+echo                *     Informacoes do Sistema    *
+echo ==============================================================
+systeminfo
+echo NUMERO DE SERIE: 
+wmic bios get serialnumber
+echo LICENCA WINDOWS:
+wmic path softwarelicensingservice get OA3xOriginalProductKey
+winver
 pause
 goto menu
 
