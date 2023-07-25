@@ -1,4 +1,8 @@
 #!/bin/bash
+CONEXAO_NAME=$(nmcli -g NAME connection show --active)
+DNS_PRIMARIO="172.23.32.4"
+DNS_SECUNDARIO="172.23.116.4"
+
 
 # Endereço de IP
 ip_address=$(hostname -I)
@@ -27,6 +31,14 @@ fusion_inventory_status=$(pgrep fusioninventory &>/dev/null && echo "Ativo" || e
 # Verifica se o Kaspersky está ativo (verifique o nome do processo real para substituir "kaspersky")
 kaspersky_status=$(pgrep kesl &> /dev/null && pgrep kesl-gui &> /dev/null && echo "Ativo" || echo "Inativo")
 
+#Configurações do dns
+sudo nmcli connection modify "$CONEXAO_NAME" ipv4.dns "$DNS_PRIMARIO, $DNS_SECUNDARIO"
+
+#Reinicia conexão de rede
+sudo nmcli connection down "$CONEXAO_NAME" && sudo nmcli connection up "$CONEXAO_NAME"
+
+#Verifica DNS
+SHOW_DNS=$(nmcli -g IP4.DNS connection show "$CONEXAO_NAME")
 
 # Imprime as informações coletadas
 echo "Endereço de IP: $ip_address"
@@ -38,6 +50,8 @@ echo "Data da BIOS: $bios_date"
 #echo "Status do USB: $usb_status"
 echo "Status do Fusion-inventory: $fusion_inventory_status"
 echo "Status do Kaspersky: $kaspersky_status"
+echo "Nome da conexão: $CONEXAO_NAME"
+echo "DNS configurado: $SHOW_DNS"
 
 
 #sudo rm status_et.sh
